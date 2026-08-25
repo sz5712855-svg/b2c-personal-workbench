@@ -704,6 +704,9 @@
                 <option value="">全部负责人</option>
                 <option>我</option>
                 <option>设计同事</option>
+                <option>MKT</option>
+                <option>UIUX</option>
+                <option>技术</option>
                 <option>其他人</option>
               </select>
               <select id="filterStatus" aria-label="按状态筛选">
@@ -885,6 +888,9 @@
             <select id="taskOwner">
               <option>我</option>
               <option>设计同事</option>
+              <option>MKT</option>
+              <option>UIUX</option>
+              <option>技术</option>
               <option>其他人</option>
             </select>
           </div>
@@ -1072,13 +1078,14 @@
     function ownerHours(task) {
       const total = estimatedHours(task);
       if (task.owner === "设计同事") return Math.round(total * 0.2 * 4) / 4;
+      if (["MKT", "UIUX", "技术", "其他人"].includes(task.owner)) return Math.round(total * 0.25 * 4) / 4;
       if (task.module === "设计" && task.type === "执行") return Math.round(total * 0.35 * 4) / 4;
       return Math.round(total * 0.8 * 4) / 4;
     }
 
     function designerHours(task) {
       const total = estimatedHours(task);
-      if (task.owner === "设计同事") return Math.round(total * 0.8 * 4) / 4;
+      if (["设计同事", "UIUX"].includes(task.owner)) return Math.round(total * 0.8 * 4) / 4;
       if (task.module === "设计" && task.type === "执行") return Math.round(total * 0.55 * 4) / 4;
       return 0;
     }
@@ -1181,7 +1188,7 @@
     }
 
     function renderDesign() {
-      const list = sortTasks(activeTasks().filter((task) => task.module === "设计" || task.owner === "设计同事"));
+      const list = sortTasks(activeTasks().filter((task) => task.module === "设计" || ["设计同事", "UIUX"].includes(task.owner)));
       qs("#designerList").innerHTML = list.length ? list.map(taskCard).join("") : empty("还没有分给设计同事的任务。");
       renderSelect("#briefTask", list);
     }
@@ -1338,6 +1345,9 @@
       const base = Number(qs("#baseHours").value || 1);
       if (module === "设计" && ["执行", "协作"].includes(type)) qs("#taskOwner").value = "设计同事";
       if (module === "设计" && base <= 2) qs("#taskOwner").value = "设计同事";
+      if (module === "营销") qs("#taskOwner").value = "MKT";
+      if (module === "产品" && ["执行", "协作"].includes(type)) qs("#taskOwner").value = "UIUX";
+      if (module === "产品" && base >= 4) qs("#taskOwner").value = "技术";
       if (["产品", "投放"].includes(module) && ["策略", "分析"].includes(type)) qs("#taskOwner").value = "我";
       showToast("已根据模块和类型建议负责人");
     }
