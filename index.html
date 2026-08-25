@@ -1,0 +1,1677 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>个人产品增长工作台</title>
+  <style>
+    :root {
+      --bg: #f6f7f3;
+      --surface: #ffffff;
+      --ink: #18211f;
+      --muted: #65706b;
+      --line: #dfe5dc;
+      --green: #1f7a5f;
+      --green-soft: #dceee7;
+      --coral: #c8543e;
+      --coral-soft: #f6ded8;
+      --gold: #a87517;
+      --gold-soft: #f4ead1;
+      --blue: #266d9f;
+      --blue-soft: #dcebf4;
+      --shadow: 0 16px 36px rgba(38, 48, 43, 0.09);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px 1fr;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      color: #f8fbf7;
+      background: #17211e;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #f2c94c;
+      color: #17211e;
+      font-weight: 800;
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 760;
+      line-height: 1.25;
+    }
+
+    .brand-subtitle {
+      color: #bac8c1;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 8px;
+      color: #dfe9e4;
+      background: transparent;
+      text-align: left;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      color: #17211e;
+      background: #f2c94c;
+    }
+
+    .nav-icon {
+      width: 22px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .sidebar-note {
+      margin-top: 28px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #c9d5cf;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    main {
+      min-width: 0;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 3vw, 36px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 8px;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .btn.danger {
+      color: #fff;
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.metrics {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .grid.two {
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+      align-items: start;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .panel {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel.flat {
+      box-shadow: none;
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0 0 14px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    .metric {
+      min-height: 114px;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric-value {
+      margin-top: 10px;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 820;
+    }
+
+    .metric-foot {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 680;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 38px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(31, 122, 95, 0.12);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .span-2 { grid-column: span 2; }
+    .span-4 { grid-column: span 4; }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 920px;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: var(--muted);
+      background: #fbfcfa;
+      font-weight: 740;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .task-title {
+      min-width: 190px;
+      font-weight: 760;
+    }
+
+    .task-note {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .p0 { background: var(--coral-soft); color: #9f3321; }
+    .p1 { background: var(--gold-soft); color: #76500b; }
+    .p2 { background: var(--blue-soft); color: #1e5a85; }
+    .p3 { background: var(--green-soft); color: #185d48; }
+    .status { background: #eef1ed; color: #53605a; }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 760;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .item-title {
+      font-weight: 780;
+      line-height: 1.35;
+    }
+
+    .item-meta {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .empty {
+      padding: 22px;
+      color: var(--muted);
+      border: 1px dashed #cbd5cf;
+      border-radius: 8px;
+      background: #fbfcfa;
+      line-height: 1.6;
+    }
+
+    .output {
+      min-height: 260px;
+      padding: 14px;
+      white-space: pre-wrap;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfa;
+      color: #26302d;
+      line-height: 1.6;
+      overflow: auto;
+    }
+
+    .bar {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e6ebe7;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--green);
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 82px 1fr 48px;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+
+    .sync-status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fbfcfa;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(23, 33, 30, 0.52);
+      z-index: 20;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(920px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      padding: 20px;
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 26px 80px rgba(0,0,0,0.24);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: none;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: #fff;
+      background: #17211e;
+      box-shadow: var(--shadow);
+      z-index: 30;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+        height: auto;
+      }
+
+      nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid.metrics,
+      .grid.two,
+      .grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .span-4,
+      .span-2 {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 18px;
+      }
+
+      .topbar {
+        display: grid;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      nav {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .span-4,
+      .span-2 {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">B2C</div>
+        <div>
+          <div class="brand-title">个人产品增长工作台</div>
+          <div class="brand-subtitle">产品 / 设计 / 营销 / 投放</div>
+        </div>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-section="dashboard"><span class="nav-icon">⌂</span>今日工作台</button>
+        <button class="nav-btn" data-section="tasks"><span class="nav-icon">＋</span>统一任务池</button>
+        <button class="nav-btn" data-section="design"><span class="nav-icon">◆</span>设计协作</button>
+        <button class="nav-btn" data-section="product"><span class="nav-icon">▣</span>产品需求</button>
+        <button class="nav-btn" data-section="review"><span class="nav-icon">↗</span>复盘中心</button>
+        <button class="nav-btn" data-section="settings"><span class="nav-icon">⚙</span>数据管理</button>
+      </nav>
+      <div class="sidebar-note">
+        每天先录入任务，再看优先级、耗时和是否可委派。目标是保护你的判断时间。
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h1 id="pageTitle">今日工作台</h1>
+          <p class="lead" id="pageLead">看清今天最该推进的事，以及本周工作容量是否已经超载。</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="seedBtn">载入示例</button>
+          <button class="btn primary" id="newTaskTopBtn">新增任务</button>
+        </div>
+      </div>
+
+      <section class="section active" id="dashboard">
+        <div class="grid metrics">
+          <div class="panel metric">
+            <div class="metric-label">本周总预估</div>
+            <div class="metric-value"><span id="totalHours">0</span>h</div>
+            <div class="metric-foot">建议控制在 40h 内</div>
+          </div>
+          <div class="panel metric">
+            <div class="metric-label">你的判断时间</div>
+            <div class="metric-value"><span id="ownerHours">0</span>h</div>
+            <div class="metric-foot">策略、评审、产品判断</div>
+          </div>
+          <div class="panel metric">
+            <div class="metric-label">可委派设计</div>
+            <div class="metric-value"><span id="designerHours">0</span>h</div>
+            <div class="metric-foot">同事可承接的执行量</div>
+          </div>
+          <div class="panel metric">
+            <div class="metric-label">高优先级任务</div>
+            <div class="metric-value"><span id="highCount">0</span></div>
+            <div class="metric-foot">P0 / P1 需要重点看</div>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="panel">
+            <h2>今日建议</h2>
+            <div id="todayList" class="list"></div>
+          </div>
+          <div class="grid">
+            <div class="panel">
+              <h2>本周负载</h2>
+              <div class="chart-row"><span>总负载</span><div class="bar"><span id="loadBar"></span></div><strong id="loadText">0%</strong></div>
+              <div class="chart-row"><span>产品</span><div class="bar"><span id="productBar"></span></div><strong id="productText">0h</strong></div>
+              <div class="chart-row"><span>设计</span><div class="bar"><span id="designBar"></span></div><strong id="designText">0h</strong></div>
+              <div class="chart-row"><span>营销</span><div class="bar"><span id="marketingBar"></span></div><strong id="marketingText">0h</strong></div>
+              <div class="chart-row"><span>投放</span><div class="bar"><span id="adsBar"></span></div><strong id="adsText">0h</strong></div>
+            </div>
+            <div class="panel">
+              <h2>待你判断</h2>
+              <div id="decisionList" class="list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="tasks">
+        <div class="panel flat">
+          <div class="toolbar">
+            <div class="filters">
+              <select id="filterModule" aria-label="按模块筛选">
+                <option value="">全部模块</option>
+                <option>产品</option>
+                <option>设计</option>
+                <option>营销</option>
+                <option>投放</option>
+                <option>复盘</option>
+              </select>
+              <select id="filterOwner" aria-label="按负责人筛选">
+                <option value="">全部负责人</option>
+                <option>我</option>
+                <option>设计同事</option>
+                <option>其他人</option>
+              </select>
+              <select id="filterStatus" aria-label="按状态筛选">
+                <option value="">全部状态</option>
+                <option>待判断</option>
+                <option>进行中</option>
+                <option>待评审</option>
+                <option>已完成</option>
+                <option>已延后</option>
+              </select>
+            </div>
+            <button class="btn primary" id="newTaskBtn">新增任务</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>任务</th>
+                  <th>模块</th>
+                  <th>优先级</th>
+                  <th>负责人</th>
+                  <th>预估</th>
+                  <th>状态</th>
+                  <th>截止</th>
+                  <th>动作</th>
+                </tr>
+              </thead>
+              <tbody id="taskTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="design">
+        <div class="grid two">
+          <div class="panel">
+            <h2>设计同事排期</h2>
+            <div id="designerList" class="list"></div>
+          </div>
+          <div class="panel">
+            <h2>设计 Brief</h2>
+            <div class="field">
+              <label for="briefTask">选择设计任务</label>
+              <select id="briefTask"></select>
+            </div>
+            <div style="height: 12px"></div>
+            <button class="btn primary" id="generateBriefBtn">生成 Brief</button>
+            <button class="btn" id="copyBriefBtn">复制</button>
+            <div style="height: 12px"></div>
+            <div class="output" id="briefOutput"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="product">
+        <div class="grid two">
+          <div class="panel">
+            <h2>产品需求与体验问题</h2>
+            <div id="productList" class="list"></div>
+          </div>
+          <div class="panel">
+            <h2>简版 PRD</h2>
+            <div class="field">
+              <label for="prdTask">选择产品任务</label>
+              <select id="prdTask"></select>
+            </div>
+            <div style="height: 12px"></div>
+            <button class="btn primary" id="generatePrdBtn">生成 PRD</button>
+            <button class="btn" id="copyPrdBtn">复制</button>
+            <div style="height: 12px"></div>
+            <div class="output" id="prdOutput"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="review">
+        <div class="grid three">
+          <div class="panel">
+            <h2>时间分布</h2>
+            <div id="moduleChart"></div>
+          </div>
+          <div class="panel">
+            <h2>效率提醒</h2>
+            <div id="riskList" class="list"></div>
+          </div>
+          <div class="panel">
+            <h2>周复盘草稿</h2>
+            <button class="btn primary" id="generateReviewBtn">生成复盘</button>
+            <button class="btn" id="copyReviewBtn">复制</button>
+            <div style="height: 12px"></div>
+            <div class="output" id="reviewOutput"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="settings">
+        <div class="grid two">
+          <div class="panel">
+            <h2>云同步</h2>
+            <p class="lead">配置 Supabase 后，电脑和手机可以共用同一份任务数据。</p>
+            <div style="height: 14px"></div>
+            <div class="form-grid">
+              <div class="field span-2">
+                <label for="syncUrl">Supabase Project URL</label>
+                <input id="syncUrl" placeholder="https://xxxx.supabase.co">
+              </div>
+              <div class="field span-2">
+                <label for="syncKey">Supabase anon public key</label>
+                <input id="syncKey" placeholder="eyJ...">
+              </div>
+              <div class="field span-2">
+                <label for="syncWorkspace">同步空间 ID</label>
+                <input id="syncWorkspace" placeholder="例如：aokii-b2c-workbench">
+              </div>
+            </div>
+            <div style="height: 12px"></div>
+            <button class="btn primary" id="saveSyncBtn">保存配置</button>
+            <button class="btn" id="pullCloudBtn">从云端拉取</button>
+            <button class="btn" id="pushCloudBtn">推送到云端</button>
+            <div class="sync-status" id="syncStatus">未配置云同步。本地数据仍可正常使用。</div>
+          </div>
+          <div class="panel">
+            <h2>导出数据</h2>
+            <p class="lead">导出 JSON 可做备份，后续也能导入回这个工作台。</p>
+            <div style="height: 14px"></div>
+            <button class="btn primary" id="exportBtn">导出 JSON</button>
+            <button class="btn" id="exportCsvBtn">导出 CSV</button>
+          </div>
+          <div class="panel">
+            <h2>导入数据</h2>
+            <div class="field">
+              <label for="importText">粘贴之前导出的 JSON</label>
+              <textarea id="importText"></textarea>
+            </div>
+            <div style="height: 12px"></div>
+            <button class="btn primary" id="importBtn">导入</button>
+            <button class="btn danger" id="clearBtn">清空本地数据</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="taskModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="modalTitle">新增任务</h2>
+        <button class="icon-btn" id="closeModalBtn" title="关闭">×</button>
+      </div>
+      <form id="taskForm">
+        <input type="hidden" id="taskId">
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="taskName">任务名称</label>
+            <input id="taskName" required placeholder="例如：优化首单转化页">
+          </div>
+          <div class="field">
+            <label for="taskModule">模块</label>
+            <select id="taskModule">
+              <option>产品</option>
+              <option>设计</option>
+              <option>营销</option>
+              <option>投放</option>
+              <option>复盘</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="taskType">类型</label>
+            <select id="taskType">
+              <option>策略</option>
+              <option>执行</option>
+              <option>审核</option>
+              <option>协作</option>
+              <option>分析</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="taskOwner">负责人</label>
+            <select id="taskOwner">
+              <option>我</option>
+              <option>设计同事</option>
+              <option>其他人</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="taskStatus">状态</label>
+            <select id="taskStatus">
+              <option>待判断</option>
+              <option>进行中</option>
+              <option>待评审</option>
+              <option>已完成</option>
+              <option>已延后</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="taskDue">截止时间</label>
+            <input id="taskDue" type="date">
+          </div>
+          <div class="field">
+            <label for="baseHours">纯执行时间</label>
+            <input id="baseHours" type="number" min="0.25" step="0.25" value="2">
+          </div>
+          <div class="field">
+            <label for="businessValue">商业价值</label>
+            <select id="businessValue">
+              <option value="5">5 高</option>
+              <option value="4">4</option>
+              <option value="3" selected>3 中</option>
+              <option value="2">2</option>
+              <option value="1">1 低</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="userImpact">用户影响</label>
+            <select id="userImpact">
+              <option value="5">5 高</option>
+              <option value="4">4</option>
+              <option value="3" selected>3 中</option>
+              <option value="2">2</option>
+              <option value="1">1 低</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="urgency">紧急度</label>
+            <select id="urgency">
+              <option value="5">5 今天</option>
+              <option value="4">4 本周</option>
+              <option value="3" selected>3 近期</option>
+              <option value="2">2 可排期</option>
+              <option value="1">1 不急</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="reuseValue">复用价值</label>
+            <select id="reuseValue">
+              <option value="5">5 可长期复用</option>
+              <option value="4">4</option>
+              <option value="3" selected>3 一般</option>
+              <option value="2">2</option>
+              <option value="1">1 一次性</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="complexity">复杂度</label>
+            <select id="complexity">
+              <option value="1.1">低</option>
+              <option value="1.35" selected>中</option>
+              <option value="1.75">高</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="uncertainty">不确定性</label>
+            <select id="uncertainty">
+              <option value="1.0">需求清楚</option>
+              <option value="1.25" selected>部分不清楚</option>
+              <option value="1.6">方向待判断</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="collaboration">协作成本</label>
+            <select id="collaboration">
+              <option value="1.0">低</option>
+              <option value="1.2" selected>中</option>
+              <option value="1.45">高</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rework">返工风险</label>
+            <select id="rework">
+              <option value="1.0">低</option>
+              <option value="1.25" selected>中</option>
+              <option value="1.55">高</option>
+            </select>
+          </div>
+          <div class="field span-4">
+            <label for="taskGoal">目标 / 业务背景</label>
+            <textarea id="taskGoal" placeholder="这件事为什么做，期望影响什么指标"></textarea>
+          </div>
+          <div class="field span-2">
+            <label for="taskDeliverable">交付物</label>
+            <textarea id="taskDeliverable" placeholder="页面、素材、PRD、复盘报告、评审结论等"></textarea>
+          </div>
+          <div class="field span-2">
+            <label for="taskBlocker">阻塞点 / 风险</label>
+            <textarea id="taskBlocker" placeholder="缺数据、缺素材、决策人不明确、开发排期未知等"></textarea>
+          </div>
+        </div>
+        <div style="height: 16px"></div>
+        <div class="actions">
+          <button type="button" class="btn" id="autoOwnerBtn">建议负责人</button>
+          <button type="submit" class="btn primary">保存任务</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const storeKey = "b2c-personal-workbench-v1";
+    const syncConfigKey = "b2c-personal-workbench-sync-v1";
+    const moduleNames = ["产品", "设计", "营销", "投放", "复盘"];
+    let tasks = loadTasks();
+    let syncConfig = loadSyncConfig();
+
+    const qs = (selector) => document.querySelector(selector);
+    const qsa = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function loadTasks() {
+      try {
+        return JSON.parse(localStorage.getItem(storeKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem(storeKey, JSON.stringify(tasks));
+    }
+
+    function loadSyncConfig() {
+      try {
+        return JSON.parse(localStorage.getItem(syncConfigKey)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveSyncConfig() {
+      syncConfig = {
+        url: qs("#syncUrl").value.trim().replace(/\/$/, ""),
+        key: qs("#syncKey").value.trim(),
+        workspace: qs("#syncWorkspace").value.trim()
+      };
+      localStorage.setItem(syncConfigKey, JSON.stringify(syncConfig));
+      renderSyncStatus("云同步配置已保存。");
+    }
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function scoreTask(task) {
+      const business = Number(task.businessValue || 3);
+      const impact = Number(task.userImpact || 3);
+      const urgency = Number(task.urgency || 3);
+      const reuse = Number(task.reuseValue || 3);
+      const cost = Math.min(5, Number(task.baseHours || 1) / 2);
+      return Math.round((business * 2 + impact * 2 + urgency * 1.5 + reuse - cost) * 10) / 10;
+    }
+
+    function priorityFor(task) {
+      const score = scoreTask(task);
+      if (score >= 25) return "P0";
+      if (score >= 19) return "P1";
+      if (score >= 13) return "P2";
+      return "P3";
+    }
+
+    function estimatedHours(task) {
+      const hours = Number(task.baseHours || 1);
+      const factor = Number(task.complexity || 1.35) * Number(task.uncertainty || 1.25) * Number(task.collaboration || 1.2) * Number(task.rework || 1.25);
+      return Math.max(0.25, Math.round(hours * factor * 4) / 4);
+    }
+
+    function ownerHours(task) {
+      const total = estimatedHours(task);
+      if (task.owner === "设计同事") return Math.round(total * 0.2 * 4) / 4;
+      if (task.module === "设计" && task.type === "执行") return Math.round(total * 0.35 * 4) / 4;
+      return Math.round(total * 0.8 * 4) / 4;
+    }
+
+    function designerHours(task) {
+      const total = estimatedHours(task);
+      if (task.owner === "设计同事") return Math.round(total * 0.8 * 4) / 4;
+      if (task.module === "设计" && task.type === "执行") return Math.round(total * 0.55 * 4) / 4;
+      return 0;
+    }
+
+    function activeTasks() {
+      return tasks.filter((task) => task.status !== "已完成" && task.status !== "已延后");
+    }
+
+    function sortTasks(list) {
+      const priorityWeight = { P0: 4, P1: 3, P2: 2, P3: 1 };
+      return [...list].sort((a, b) => {
+        const pa = priorityWeight[priorityFor(a)];
+        const pb = priorityWeight[priorityFor(b)];
+        if (pb !== pa) return pb - pa;
+        return scoreTask(b) - scoreTask(a);
+      });
+    }
+
+    function render() {
+      renderDashboard();
+      renderTaskTable();
+      renderDesign();
+      renderProduct();
+      renderReview();
+      renderSyncInputs();
+      saveTasks();
+    }
+
+    function renderSyncInputs() {
+      qs("#syncUrl").value = syncConfig.url || "";
+      qs("#syncKey").value = syncConfig.key || "";
+      qs("#syncWorkspace").value = syncConfig.workspace || "";
+      renderSyncStatus();
+    }
+
+    function renderSyncStatus(message) {
+      const configured = syncConfig.url && syncConfig.key && syncConfig.workspace;
+      const savedAt = localStorage.getItem(`${syncConfigKey}-last-sync`);
+      qs("#syncStatus").textContent = message || (configured
+        ? `已配置云同步。${savedAt ? `上次同步：${savedAt}` : "还没有同步记录。"}`
+        : "未配置云同步。本地数据仍可正常使用。");
+    }
+
+    function renderDashboard() {
+      const current = activeTasks();
+      const total = sum(current.map(estimatedHours));
+      const mine = sum(current.map(ownerHours));
+      const delegated = sum(current.map(designerHours));
+      const high = current.filter((task) => ["P0", "P1"].includes(priorityFor(task))).length;
+
+      qs("#totalHours").textContent = round(total);
+      qs("#ownerHours").textContent = round(mine);
+      qs("#designerHours").textContent = round(delegated);
+      qs("#highCount").textContent = high;
+
+      setBar("#loadBar", "#loadText", Math.min(100, Math.round(total / 40 * 100)), "%");
+      moduleNames.forEach((name) => {
+        const value = sum(current.filter((task) => task.module === name).map(estimatedHours));
+        const id = name === "产品" ? "product" : name === "设计" ? "design" : name === "营销" ? "marketing" : name === "投放" ? "ads" : "";
+        if (id) setBar(`#${id}Bar`, `#${id}Text`, Math.min(100, Math.round(value / 14 * 100)), "h", value);
+      });
+
+      const today = sortTasks(current).slice(0, 4);
+      qs("#todayList").innerHTML = today.length ? today.map(taskCard).join("") : empty("先新增几个任务，我会帮你排今天的核心任务和轻任务。");
+
+      const decisions = sortTasks(current.filter((task) => task.owner === "我" || task.status === "待判断")).slice(0, 5);
+      qs("#decisionList").innerHTML = decisions.length ? decisions.map(taskMini).join("") : empty("目前没有待你判断的事项。");
+    }
+
+    function renderTaskTable() {
+      const moduleFilter = qs("#filterModule").value;
+      const ownerFilter = qs("#filterOwner").value;
+      const statusFilter = qs("#filterStatus").value;
+      let list = sortTasks(tasks);
+      if (moduleFilter) list = list.filter((task) => task.module === moduleFilter);
+      if (ownerFilter) list = list.filter((task) => task.owner === ownerFilter);
+      if (statusFilter) list = list.filter((task) => task.status === statusFilter);
+
+      qs("#taskTable").innerHTML = list.length ? list.map((task) => `
+        <tr>
+          <td>
+            <div class="task-title">${escapeHtml(task.name)}</div>
+            <div class="task-note">${escapeHtml(task.goal || "未填写目标")}</div>
+          </td>
+          <td>${escapeHtml(task.module)} / ${escapeHtml(task.type)}</td>
+          <td><span class="pill ${priorityFor(task).toLowerCase()}">${priorityFor(task)} · ${scoreTask(task)}</span></td>
+          <td>${escapeHtml(task.owner)}</td>
+          <td>${round(estimatedHours(task))}h<br><span class="task-note">你 ${round(ownerHours(task))}h / 设计 ${round(designerHours(task))}h</span></td>
+          <td><span class="pill status">${escapeHtml(task.status)}</span></td>
+          <td>${task.due || "未设置"}</td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" title="编辑" data-edit="${task.id}">改</button>
+              <button class="icon-btn" title="完成" data-done="${task.id}">✓</button>
+              <button class="icon-btn" title="删除" data-delete="${task.id}">删</button>
+            </div>
+          </td>
+        </tr>
+      `).join("") : `<tr><td colspan="8">${empty("任务池还是空的。新增第一条任务后，这里会自动计算优先级和耗时。")}</td></tr>`;
+    }
+
+    function renderDesign() {
+      const list = sortTasks(activeTasks().filter((task) => task.module === "设计" || task.owner === "设计同事"));
+      qs("#designerList").innerHTML = list.length ? list.map(taskCard).join("") : empty("还没有分给设计同事的任务。");
+      renderSelect("#briefTask", list);
+    }
+
+    function renderProduct() {
+      const list = sortTasks(activeTasks().filter((task) => task.module === "产品"));
+      qs("#productList").innerHTML = list.length ? list.map(taskCard).join("") : empty("还没有产品需求或体验问题。");
+      renderSelect("#prdTask", list);
+    }
+
+    function renderReview() {
+      const current = activeTasks();
+      const total = Math.max(1, sum(current.map(estimatedHours)));
+      qs("#moduleChart").innerHTML = moduleNames.map((name) => {
+        const value = sum(current.filter((task) => task.module === name).map(estimatedHours));
+        return `<div class="chart-row"><span>${name}</span><div class="bar"><span style="width:${Math.round(value / total * 100)}%"></span></div><strong>${round(value)}h</strong></div>`;
+      }).join("");
+
+      const risks = [];
+      const totalHours = sum(current.map(estimatedHours));
+      const myHours = sum(current.map(ownerHours));
+      const designHours = sum(current.map(designerHours));
+      if (totalHours > 40) risks.push("本周总预估超过 40h，需要延后 P2/P3 或减少返工风险。");
+      if (myHours > 28) risks.push("你的判断时间偏高，建议把设计执行和资料整理继续拆出去。");
+      if (designHours > 24) risks.push("设计同事排期较满，优先保留高价值素材和核心页面。");
+      if (current.filter((task) => task.status === "待判断").length > 5) risks.push("待判断任务过多，建议每天固定 30 分钟集中清理。");
+      if (!risks.length) risks.push("当前负载比较健康，可以继续保持每周复盘。");
+      qs("#riskList").innerHTML = risks.map((risk) => `<div class="item">${escapeHtml(risk)}</div>`).join("");
+    }
+
+    function renderSelect(selector, list) {
+      const el = qs(selector);
+      el.innerHTML = list.length ? list.map((task) => `<option value="${task.id}">${escapeHtml(task.name)}</option>`).join("") : `<option value="">暂无任务</option>`;
+    }
+
+    function taskCard(task) {
+      return `
+        <div class="item">
+          <div class="item-head">
+            <div>
+              <div class="item-title">${escapeHtml(task.name)}</div>
+              <div class="item-meta">${escapeHtml(task.module)} / ${escapeHtml(task.type)} · ${escapeHtml(task.owner)} · ${round(estimatedHours(task))}h</div>
+            </div>
+            <span class="pill ${priorityFor(task).toLowerCase()}">${priorityFor(task)}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(task.goal || "未填写目标")}</div>
+        </div>
+      `;
+    }
+
+    function taskMini(task) {
+      return `
+        <div class="item">
+          <div class="item-head">
+            <div class="item-title">${escapeHtml(task.name)}</div>
+            <span class="pill ${priorityFor(task).toLowerCase()}">${priorityFor(task)}</span>
+          </div>
+          <div class="item-meta">${escapeHtml(task.blocker || task.deliverable || "需要确认目标、交付物或优先级。")}</div>
+        </div>
+      `;
+    }
+
+    function empty(text) {
+      return `<div class="empty">${escapeHtml(text)}</div>`;
+    }
+
+    function setBar(barSelector, textSelector, percent, suffix, rawValue) {
+      qs(barSelector).style.width = `${percent}%`;
+      qs(textSelector).textContent = suffix === "h" ? `${round(rawValue || 0)}h` : `${percent}${suffix}`;
+    }
+
+    function sum(values) {
+      return values.reduce((total, value) => total + Number(value || 0), 0);
+    }
+
+    function round(value) {
+      return Math.round(Number(value || 0) * 10) / 10;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function showToast(text) {
+      const toast = qs("#toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function openModal(task) {
+      qs("#taskModal").classList.add("active");
+      qs("#modalTitle").textContent = task ? "编辑任务" : "新增任务";
+      qs("#taskForm").reset();
+      qs("#taskId").value = task?.id || "";
+      qs("#taskName").value = task?.name || "";
+      qs("#taskModule").value = task?.module || "产品";
+      qs("#taskType").value = task?.type || "策略";
+      qs("#taskOwner").value = task?.owner || "我";
+      qs("#taskStatus").value = task?.status || "待判断";
+      qs("#taskDue").value = task?.due || "";
+      qs("#baseHours").value = task?.baseHours || 2;
+      qs("#businessValue").value = task?.businessValue || 3;
+      qs("#userImpact").value = task?.userImpact || 3;
+      qs("#urgency").value = task?.urgency || 3;
+      qs("#reuseValue").value = task?.reuseValue || 3;
+      qs("#complexity").value = task?.complexity || 1.35;
+      qs("#uncertainty").value = task?.uncertainty || 1.25;
+      qs("#collaboration").value = task?.collaboration || 1.2;
+      qs("#rework").value = task?.rework || 1.25;
+      qs("#taskGoal").value = task?.goal || "";
+      qs("#taskDeliverable").value = task?.deliverable || "";
+      qs("#taskBlocker").value = task?.blocker || "";
+    }
+
+    function closeModal() {
+      qs("#taskModal").classList.remove("active");
+    }
+
+    function formToTask() {
+      return {
+        id: qs("#taskId").value || uid(),
+        name: qs("#taskName").value.trim(),
+        module: qs("#taskModule").value,
+        type: qs("#taskType").value,
+        owner: qs("#taskOwner").value,
+        status: qs("#taskStatus").value,
+        due: qs("#taskDue").value,
+        baseHours: Number(qs("#baseHours").value || 1),
+        businessValue: Number(qs("#businessValue").value),
+        userImpact: Number(qs("#userImpact").value),
+        urgency: Number(qs("#urgency").value),
+        reuseValue: Number(qs("#reuseValue").value),
+        complexity: Number(qs("#complexity").value),
+        uncertainty: Number(qs("#uncertainty").value),
+        collaboration: Number(qs("#collaboration").value),
+        rework: Number(qs("#rework").value),
+        goal: qs("#taskGoal").value.trim(),
+        deliverable: qs("#taskDeliverable").value.trim(),
+        blocker: qs("#taskBlocker").value.trim(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function suggestOwner() {
+      const module = qs("#taskModule").value;
+      const type = qs("#taskType").value;
+      const base = Number(qs("#baseHours").value || 1);
+      if (module === "设计" && ["执行", "协作"].includes(type)) qs("#taskOwner").value = "设计同事";
+      if (module === "设计" && base <= 2) qs("#taskOwner").value = "设计同事";
+      if (["产品", "投放"].includes(module) && ["策略", "分析"].includes(type)) qs("#taskOwner").value = "我";
+      showToast("已根据模块和类型建议负责人");
+    }
+
+    function generateBrief() {
+      const task = tasks.find((item) => item.id === qs("#briefTask").value);
+      if (!task) return;
+      const text = `# 设计 Brief
+
+项目名称：${task.name}
+任务等级：${priorityFor(task)}
+负责人：${task.owner}
+预计时间：${round(estimatedHours(task))}h
+截止时间：${task.due || "待定"}
+
+## 业务目标
+${task.goal || "补充这次设计要影响的业务目标，例如点击率、转化率、活动报名、品牌认知。"}
+
+## 使用场景
+${task.module === "投放" ? "广告投放素材 / 素材测试" : task.module === "产品" ? "产品页面 / 用户流程 / 功能体验" : "品牌视觉 / 活动物料 / 页面视觉"}
+
+## 核心信息
+${task.deliverable || "补充主标题、卖点、必要文案、行动引导和交付格式。"}
+
+## 必须包含
+- 核心卖点一眼可见
+- 信息层级清楚
+- 符合品牌调性
+- 适配实际投放或产品场景
+
+## 不要出现
+- 只好看但看不懂
+- 主信息被装饰元素抢走
+- 没有行动引导
+
+## 验收标准
+- 用户 3 秒内能理解主要信息
+- 关键文字在移动端可读
+- 交付尺寸、格式和命名清楚
+- 可沉淀为后续模板
+
+## 风险与备注
+${task.blocker || "暂无"}`;
+      qs("#briefOutput").textContent = text;
+    }
+
+    function generatePrd() {
+      const task = tasks.find((item) => item.id === qs("#prdTask").value);
+      if (!task) return;
+      const text = `# 简版 PRD
+
+需求名称：${task.name}
+状态：${task.status}
+优先级：${priorityFor(task)}
+负责人：${task.owner}
+预计投入：${round(estimatedHours(task))}h
+
+## 1. 背景
+${task.goal || "说明现在遇到的用户问题或业务问题。"}
+
+## 2. 目标
+- 用户目标：降低理解成本或操作成本
+- 业务目标：提升关键路径转化或留存
+- 成功指标：点击率、注册率、下单率、完成率、投诉/反馈量
+
+## 3. 用户故事
+作为目标用户，我想要更顺畅地完成关键动作，从而更快获得产品价值。
+
+## 4. 需求范围
+${task.deliverable || "列出本次要交付的页面、功能、文案、埋点或验收内容。"}
+
+## 5. 非目标
+- 本期不做大范围架构调整
+- 本期不扩大到非核心路径
+
+## 6. 验收标准
+- 核心路径可完整走通
+- 关键文案清晰
+- 异常和空状态有处理
+- 上线后可通过数据判断效果
+
+## 7. 风险与依赖
+${task.blocker || "暂无"}`;
+      qs("#prdOutput").textContent = text;
+    }
+
+    function generateReview() {
+      const current = activeTasks();
+      const byModule = moduleNames.map((name) => `${name}：${round(sum(current.filter((task) => task.module === name).map(estimatedHours)))}h`).join("\n");
+      const high = sortTasks(current).filter((task) => ["P0", "P1"].includes(priorityFor(task))).map((task) => `- ${priorityFor(task)} ${task.name}：${round(estimatedHours(task))}h，负责人 ${task.owner}`).join("\n") || "- 暂无";
+      const text = `# 本周工作复盘草稿
+
+## 1. 时间分布
+${byModule}
+
+## 2. 高优先级事项
+${high}
+
+## 3. 负载判断
+- 本周总预估：${round(sum(current.map(estimatedHours)))}h
+- 你的判断时间：${round(sum(current.map(ownerHours)))}h
+- 可委派设计时间：${round(sum(current.map(designerHours)))}h
+
+## 4. 下周优化动作
+- 把重复设计需求模板化
+- P2/P3 任务只在容量允许时处理
+- 每个产品和投放任务补齐成功指标
+- 记录返工原因，减少下次沟通成本`;
+      qs("#reviewOutput").textContent = text;
+    }
+
+    function exportJson() {
+      download(`b2c-workbench-${todayStamp()}.json`, JSON.stringify(tasks, null, 2), "application/json");
+    }
+
+    function exportCsv() {
+      const header = ["任务名称", "模块", "类型", "优先级", "负责人", "状态", "预计时间", "你的时间", "设计时间", "截止时间", "目标", "交付物", "阻塞点"];
+      const rows = tasks.map((task) => [
+        task.name, task.module, task.type, priorityFor(task), task.owner, task.status, round(estimatedHours(task)),
+        round(ownerHours(task)), round(designerHours(task)), task.due || "", task.goal || "", task.deliverable || "", task.blocker || ""
+      ]);
+      const csv = [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+      download(`b2c-workbench-${todayStamp()}.csv`, csv, "text/csv;charset=utf-8");
+    }
+
+    function ensureSyncConfig() {
+      if (syncConfig.url && syncConfig.key && syncConfig.workspace) return true;
+      showToast("请先保存云同步配置");
+      return false;
+    }
+
+    async function pushCloud() {
+      if (!ensureSyncConfig()) return;
+      renderSyncStatus("正在推送到云端...");
+      try {
+        const payload = {
+          id: syncConfig.workspace,
+          data: tasks,
+          updated_at: new Date().toISOString()
+        };
+        const response = await fetch(`${syncConfig.url}/rest/v1/workbench_snapshots`, {
+          method: "POST",
+          headers: syncHeaders({ prefer: "resolution=merge-duplicates" }),
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error(await response.text());
+        markSynced();
+        renderSyncStatus("已推送到云端。手机端刷新后可拉取最新数据。");
+        showToast("云端推送成功");
+      } catch (error) {
+        renderSyncStatus(`推送失败：${error.message}`);
+        showToast("推送失败");
+      }
+    }
+
+    async function pullCloud() {
+      if (!ensureSyncConfig()) return;
+      renderSyncStatus("正在从云端拉取...");
+      try {
+        const url = `${syncConfig.url}/rest/v1/workbench_snapshots?id=eq.${encodeURIComponent(syncConfig.workspace)}&select=data,updated_at`;
+        const response = await fetch(url, { headers: syncHeaders() });
+        if (!response.ok) throw new Error(await response.text());
+        const rows = await response.json();
+        if (!rows.length) {
+          renderSyncStatus("云端还没有数据。可以先从当前设备推送一次。");
+          return;
+        }
+        if (!Array.isArray(rows[0].data)) throw new Error("云端数据格式不正确");
+        tasks = rows[0].data;
+        markSynced(rows[0].updated_at);
+        render();
+        renderSyncStatus("已从云端拉取最新数据。");
+        showToast("云端拉取成功");
+      } catch (error) {
+        renderSyncStatus(`拉取失败：${error.message}`);
+        showToast("拉取失败");
+      }
+    }
+
+    function syncHeaders(extra = {}) {
+      const headers = {
+        apikey: syncConfig.key,
+        Authorization: `Bearer ${syncConfig.key}`,
+        "Content-Type": "application/json"
+      };
+      if (extra.prefer) headers.Prefer = extra.prefer;
+      return headers;
+    }
+
+    function markSynced(value) {
+      const stamp = value ? new Date(value).toLocaleString() : new Date().toLocaleString();
+      localStorage.setItem(`${syncConfigKey}-last-sync`, stamp);
+    }
+
+    function csvCell(value) {
+      return `"${String(value ?? "").replace(/"/g, '""')}"`;
+    }
+
+    function download(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function todayStamp() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function copyText(selector) {
+      const text = qs(selector).textContent;
+      if (!text.trim()) return showToast("先生成内容");
+      navigator.clipboard.writeText(text).then(() => showToast("已复制"));
+    }
+
+    function seedTasks() {
+      if (tasks.length && !confirm("载入示例会追加 5 条样例任务，继续吗？")) return;
+      tasks = tasks.concat([
+        {
+          id: uid(), name: "梳理首单转化路径体验问题", module: "产品", type: "分析", owner: "我", status: "待判断", due: "",
+          baseHours: 3, businessValue: 5, userImpact: 5, urgency: 4, reuseValue: 4, complexity: 1.35, uncertainty: 1.25, collaboration: 1.2, rework: 1.25,
+          goal: "找出用户从广告进入到完成首单之间的主要流失点。", deliverable: "体验问题清单、优先级、下版优化建议。", blocker: "需要补充页面数据和用户反馈。"
+        },
+        {
+          id: uid(), name: "新一轮广告素材测试方向", module: "投放", type: "策略", owner: "我", status: "进行中", due: "",
+          baseHours: 2, businessValue: 5, userImpact: 3, urgency: 4, reuseValue: 4, complexity: 1.35, uncertainty: 1.25, collaboration: 1.2, rework: 1.25,
+          goal: "围绕不同卖点设计素材测试矩阵，提升点击率和线索质量。", deliverable: "测试假设、素材方向、预算建议。", blocker: ""
+        },
+        {
+          id: uid(), name: "广告素材尺寸适配", module: "设计", type: "执行", owner: "设计同事", status: "进行中", due: "",
+          baseHours: 4, businessValue: 3, userImpact: 2, urgency: 4, reuseValue: 3, complexity: 1.1, uncertainty: 1, collaboration: 1.2, rework: 1.25,
+          goal: "把已确认方向批量适配到各投放尺寸。", deliverable: "Meta、Google、短视频封面尺寸。", blocker: "等待最终文案。"
+        },
+        {
+          id: uid(), name: "核心品牌视觉规范补齐", module: "设计", type: "审核", owner: "我", status: "待评审", due: "",
+          baseHours: 2, businessValue: 4, userImpact: 3, urgency: 3, reuseValue: 5, complexity: 1.35, uncertainty: 1.25, collaboration: 1.2, rework: 1.25,
+          goal: "减少后续设计返工，让同事能独立判断常规物料。", deliverable: "色彩、字体、按钮、素材版式规则。", blocker: ""
+        },
+        {
+          id: uid(), name: "活动页面上线后数据复盘", module: "复盘", type: "分析", owner: "我", status: "待判断", due: "",
+          baseHours: 2, businessValue: 4, userImpact: 4, urgency: 3, reuseValue: 4, complexity: 1.35, uncertainty: 1.25, collaboration: 1.2, rework: 1.25,
+          goal: "判断页面改版是否提升关键转化，并沉淀下一轮优化。", deliverable: "数据复盘报告、下一步动作。", blocker: "需要获取投放和页面转化数据。"
+        }
+      ]);
+      render();
+      showToast("已载入示例任务");
+    }
+
+    qsa(".nav-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        qsa(".nav-btn").forEach((item) => item.classList.remove("active"));
+        qsa(".section").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        qs(`#${button.dataset.section}`).classList.add("active");
+        const titles = {
+          dashboard: ["今日工作台", "看清今天最该推进的事，以及本周工作容量是否已经超载。"],
+          tasks: ["统一任务池", "把产品、设计、营销、投放和复盘任务统一收口。"],
+          design: ["设计协作", "给设计同事清楚的 Brief、排期和验收标准。"],
+          product: ["产品需求", "把体验问题和产品需求变成可评估、可验收的事项。"],
+          review: ["复盘中心", "看时间花在哪里，以及哪些工作值得继续投入。"],
+          settings: ["数据管理", "备份、导入或清理本地浏览器数据。"]
+        };
+        qs("#pageTitle").textContent = titles[button.dataset.section][0];
+        qs("#pageLead").textContent = titles[button.dataset.section][1];
+      });
+    });
+
+    qs("#newTaskBtn").addEventListener("click", () => openModal());
+    qs("#newTaskTopBtn").addEventListener("click", () => openModal());
+    qs("#closeModalBtn").addEventListener("click", closeModal);
+    qs("#taskModal").addEventListener("click", (event) => {
+      if (event.target.id === "taskModal") closeModal();
+    });
+    qs("#autoOwnerBtn").addEventListener("click", suggestOwner);
+    qs("#seedBtn").addEventListener("click", seedTasks);
+
+    qs("#taskForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const task = formToTask();
+      if (!task.name) return;
+      const index = tasks.findIndex((item) => item.id === task.id);
+      if (index >= 0) tasks[index] = task;
+      else tasks.push(task);
+      closeModal();
+      render();
+      showToast("任务已保存");
+    });
+
+    qs("#taskTable").addEventListener("click", (event) => {
+      const editId = event.target.dataset.edit;
+      const doneId = event.target.dataset.done;
+      const deleteId = event.target.dataset.delete;
+      if (editId) openModal(tasks.find((task) => task.id === editId));
+      if (doneId) {
+        tasks = tasks.map((task) => task.id === doneId ? { ...task, status: "已完成" } : task);
+        render();
+        showToast("已标记完成");
+      }
+      if (deleteId && confirm("确认删除这条任务吗？")) {
+        tasks = tasks.filter((task) => task.id !== deleteId);
+        render();
+        showToast("已删除");
+      }
+    });
+
+    ["#filterModule", "#filterOwner", "#filterStatus"].forEach((selector) => {
+      qs(selector).addEventListener("change", renderTaskTable);
+    });
+
+    qs("#generateBriefBtn").addEventListener("click", generateBrief);
+    qs("#generatePrdBtn").addEventListener("click", generatePrd);
+    qs("#generateReviewBtn").addEventListener("click", generateReview);
+    qs("#copyBriefBtn").addEventListener("click", () => copyText("#briefOutput"));
+    qs("#copyPrdBtn").addEventListener("click", () => copyText("#prdOutput"));
+    qs("#copyReviewBtn").addEventListener("click", () => copyText("#reviewOutput"));
+    qs("#exportBtn").addEventListener("click", exportJson);
+    qs("#exportCsvBtn").addEventListener("click", exportCsv);
+    qs("#saveSyncBtn").addEventListener("click", () => {
+      saveSyncConfig();
+      showToast("同步配置已保存");
+    });
+    qs("#pushCloudBtn").addEventListener("click", pushCloud);
+    qs("#pullCloudBtn").addEventListener("click", pullCloud);
+
+    qs("#importBtn").addEventListener("click", () => {
+      try {
+        const imported = JSON.parse(qs("#importText").value);
+        if (!Array.isArray(imported)) throw new Error("not array");
+        tasks = imported;
+        render();
+        showToast("导入成功");
+      } catch {
+        showToast("JSON 格式不正确");
+      }
+    });
+
+    qs("#clearBtn").addEventListener("click", () => {
+      if (!confirm("确认清空本地数据吗？")) return;
+      tasks = [];
+      render();
+      showToast("已清空");
+    });
+
+    render();
+  </script>
+</body>
+</html>
