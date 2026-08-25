@@ -3,23 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123034">
+  <meta name="apple-mobile-web-app-title" content="PG 工作台">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="data:image/png;base64,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">
+  <link rel="apple-touch-icon" href="data:image/png;base64,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">
   <title>个人产品增长工作台</title>
   <style>
     :root {
-      --bg: #f6f7f3;
+      --bg: #f4f7f8;
       --surface: #ffffff;
-      --ink: #18211f;
-      --muted: #65706b;
-      --line: #dfe5dc;
-      --green: #1f7a5f;
-      --green-soft: #dceee7;
-      --coral: #c8543e;
-      --coral-soft: #f6ded8;
-      --gold: #a87517;
-      --gold-soft: #f4ead1;
-      --blue: #266d9f;
-      --blue-soft: #dcebf4;
-      --shadow: 0 16px 36px rgba(38, 48, 43, 0.09);
+      --ink: #152527;
+      --muted: #637174;
+      --line: #dbe4e5;
+      --green: #168b6b;
+      --green-soft: #dff3ed;
+      --coral: #d75f4c;
+      --coral-soft: #f8dfda;
+      --gold: #b7791f;
+      --gold-soft: #f7ead0;
+      --blue: #367fc2;
+      --blue-soft: #dcebf8;
+      --sidebar: #123034;
+      --sidebar-muted: #b9c8c9;
+      --accent: #f2b84b;
+      --shadow: 0 16px 36px rgba(23, 43, 46, 0.1);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
@@ -55,7 +63,7 @@
       height: 100vh;
       padding: 24px 18px;
       color: #f8fbf7;
-      background: #17211e;
+      background: var(--sidebar);
     }
 
     .brand {
@@ -71,9 +79,10 @@
       display: grid;
       place-items: center;
       border-radius: 8px;
-      background: #f2c94c;
-      color: #17211e;
+      background: conic-gradient(from 0deg, #21a67a 0 25%, #f2b84b 25% 50%, #e06a55 50% 75%, #4d8fcf 75% 100%);
+      color: #123034;
       font-weight: 800;
+      box-shadow: inset 0 0 0 10px rgba(255,255,255,0.9);
     }
 
     .brand-title {
@@ -83,7 +92,7 @@
     }
 
     .brand-subtitle {
-      color: #bac8c1;
+      color: var(--sidebar-muted);
       font-size: 12px;
       margin-top: 3px;
     }
@@ -101,15 +110,15 @@
       align-items: center;
       gap: 10px;
       border-radius: 8px;
-      color: #dfe9e4;
+      color: #dbe8e8;
       background: transparent;
       text-align: left;
     }
 
     .nav-btn:hover,
     .nav-btn.active {
-      color: #17211e;
-      background: #f2c94c;
+      color: #102528;
+      background: var(--accent);
     }
 
     .nav-icon {
@@ -123,7 +132,7 @@
       padding: 14px;
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 8px;
-      color: #c9d5cf;
+      color: var(--sidebar-muted);
       font-size: 13px;
       line-height: 1.55;
     }
@@ -596,7 +605,7 @@
   <div class="app">
     <aside>
       <div class="brand">
-        <div class="brand-mark">B2C</div>
+        <div class="brand-mark">PG</div>
         <div>
           <div class="brand-title">个人产品增长工作台</div>
           <div class="brand-subtitle">产品 / 设计 / 营销 / 投放</div>
